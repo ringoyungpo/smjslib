@@ -2,7 +2,6 @@
 import scrapy
 import re
 
-
 def parse_books_imformation(response):
     book_info = response.css('#ctl00_ContentPlaceHolder1_bookcardinfolbl').xpath('string(.)').extract()[0].split(
         '\u3000')
