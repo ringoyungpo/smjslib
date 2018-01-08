@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
 import re
-from urllib.parse import urlencode
-
 
 def parse_books_imformation(response):
     book_info = response.css('#ctl00_ContentPlaceHolder1_bookcardinfolbl').xpath('string(.)').extract()[0].split(
@@ -60,24 +58,6 @@ def parse_books_url(response):
         yield response.follow(href, parse_books_imformation)
 
 
-def parse_books_pages(response):
-    pages = len(response.css('#ctl00_ContentPlaceHolder1_gotoddlfl1 > option'))
-    anywords = response.xpath('//*[@id="ctl00_ContentPlaceHolder1_conditionlbl"]/font/text()').extract()[0]
-    body = {'anywords': anywords,
-            'dt': 'ALL',
-            'cl': 'ALL',
-            'dp': '20',
-            'sf': 'M_PUB_YEAR',
-            'ob': 'DESC',
-            'sm': 'table',
-            'dept': 'ALL'}
-
-    for page in range(1, pages + 1):
-        body['page'] = page
-        url = 'http://smjslib.jmu.edu.cn/searchresult.aspx?{}'.format(urlencode(body, encoding='gb2312'))
-        yield scrapy.Request(url, parse_books_url)
-
-
 class BooksSpider(scrapy.Spider):
     name = 'books'
     allowed_domains = ['smjslib.jmu.edu.cn']
@@ -85,4 +65,4 @@ class BooksSpider(scrapy.Spider):
 
     def parse(self, response):
         for href in response.css('td a::attr(href)'):
-            yield response.follow(href, parse_books_pages)
+            yield response.follow(href, parse_books_url)
