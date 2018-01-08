@@ -1,3 +1,6 @@
 from scrapy import cmdline
+import time
 
-cmdline.execute('scrapy crawl books -o books.csv'.split())
+localtime = time.strftime('%Y-%m-%d_%H:%M',time.localtime(time.time()))
+
+cmdline.execute('scrapy crawl books -o books-{}.csv'.format(localtime).split())
