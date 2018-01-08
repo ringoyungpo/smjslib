@@ -14,7 +14,7 @@ def parse_books_imformation(response):
     author = title_author_publishment[1]
     publishment = title_author_publishment[-1]
     publisher_city, publisher, publish_year = re.split('：|，', publishment)
-    publish_year = publish_year[:4]
+    publish_year = re.search(r'\d{4}',publish_year).group(0)
 
     isbnandprice = str(book_info[-5])
     isbn = isbnandprice.split('：')[0]
