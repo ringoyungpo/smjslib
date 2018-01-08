@@ -12,7 +12,7 @@ def parse_books_imformation(response):
     title_author_publishment = re.split('／|．—', book_info[0])
     title = title_author_publishment[0]
     author = title_author_publishment[1]
-    publishment = title_author_publishment[-1]
+    publishment = title_author_publishment[-1].split('；')[0]
     publisher_city, publisher, publish_year = re.split('：|，', publishment)
     publish_year = re.search(r'\d{4}', publish_year).group()
 
@@ -40,7 +40,7 @@ def parse_books_imformation(response):
     tags = str(book_info[-2]).split('．')[-1]
     tags = re.split(r'[①-⑳]', tags)
     tags.remove('')
-    tags = list(map(lambda taglist: taglist.split('  - '), tags))
+    tags = list(map(lambda taglist: re.split('  - |-', taglist), tags))
     tags = sum(tags, [])
     tags = list(set(tags))
 
