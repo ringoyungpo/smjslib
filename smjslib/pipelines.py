@@ -14,7 +14,7 @@ class SmjslibPipeline(object):
             host='localhost',
             db='smjslib',
             user='root',
-            password='tiger',
+            password='root',
             port=3306,
             charset='utf8',
             use_unicode=True)
