@@ -22,17 +22,30 @@ class SmjslibPipeline(object):
         self.cursor = self.connect.cursor()
 
     def process_item(self, item, spider):
-        print(item)
-        sql = r"INSERT INTO books(title, author, publisher_city, publisher,publish_year, pages, length, isbn, price, titles, authors, tags, association, total, available, loan, frequence)VALUES('{}', '{}', '{}', '{}','{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', {}, {}, {}, {})".format(
-            item['title'], item['author'], item['publisher_city'], item['publisher'], item['publish_year'],
-            item['pages'], item['length'], item['isbn'], item['price'], ','.join(item['titles']),
-            ','.join(item['authors']), ','.join(item['tags']), item['association'], item['total'], item['available'],
-            item['loan'], item['frequence'])
-        try:
-            print(sql)
-            self.cursor.execute(sql)
-            self.connect.commit()
-        except Exception as error:
-            print(error)
-
+        sql = r"SELECT * FROM books WHERE isbn='{}'".format(item['isbn'])
+        self.cursor.execute(sql)
+        repetition = self.cursor.fetchone()
+        if repetition:
+            pass
+        else:
+            try:
+                sql = r"INSERT INTO books(title, author, publisher_city, publisher,publish_year, pages, length, isbn, price, titles, authors, tags, association, total, available, loan, frequence)VALUES('{}', '{}', '{}', '{}','{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', {}, {}, {}, {})".format(
+                    item['title'], item['author'], item['publisher_city'], item['publisher'], item['publish_year'],
+                    item['pages'], item['length'], item['isbn'], item['price'], ','.join(item['titles']),
+                    ','.join(item['authors']), ','.join(item['tags']), item['association'], item['total'],
+                    item['available'], item['loan'], item['frequence'])
+                self.cursor.execute(sql)
+                self.connect.commit()
+                for tag in item['tags']:
+                    sql = r"INSERT INTO tags(isbn, tag)VALUES('{}', '{}')".format(
+                        item['isbn'], tag)
+                    self.cursor.execute(sql)
+                    self.connect.commit()
+                for author in item['authors']:
+                    sql = r"INSERT INTO authors(isbn, author)VALUES('{}', '{}')".format(
+                        item['isbn'], author)
+                    self.cursor.execute(sql)
+                    self.connect.commit()
+            except Exception as error:
+                print(error)
         return item
