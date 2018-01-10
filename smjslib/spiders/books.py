@@ -2,7 +2,6 @@
 import scrapy
 import re
 from urllib.parse import urlencode
-from smjslib.items import SmjslibItem
 
 
 def parse_books_imformation(response):
@@ -51,26 +50,12 @@ def parse_books_imformation(response):
     total = len(response.xpath('//*[@id="bardiv"]/div/table/tbody/tr[*]/td[1]/a'))
     loan = len(response.xpath('//*[@id="bardiv"]/div/table/tbody/tr[*]/td[6]/a'))
     frequence = response.xpath('//*[@id="ctl00_ContentPlaceHolder1_blclbl"]/text()').extract()[0]
-    item = SmjslibItem()
+
     if isbn and price and association:
-        item['title'] = title
-        item['author'] = author
-        item['publisher_city'] = publisher_city
-        item['publisher'] = publisher
-        item['publish_year'] = publish_year
-        item['pages'] = pages
-        item['length'] = length
-        item['isbn'] = isbn
-        item['price'] = price
-        item['titles'] = titles
-        item['authors'] = authors
-        item['tags'] = tags
-        item['association'] = association
-        item['total'] = total
-        item['available'] = total - loan
-        item['loan'] = loan
-        item['frequence'] = frequence
-        yield item
+        yield dict(title=title, author=author, publisher_city=publisher_city, publisher=publisher,
+                   publish_year=publish_year, pages=pages, length=length, isbn=isbn, price=price, titles=titles,
+                   authors=authors, tags=tags,
+                   association=association, total=total, available=total - loan, loan=loan, frequence=frequence)
 
 
 def parse_books_url(response):
