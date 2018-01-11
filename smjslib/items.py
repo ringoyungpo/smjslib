@@ -5,10 +5,33 @@
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/items.html
 
-import scrapy
+from scrapy import Field,Item
 
 
-class SmjslibItem(scrapy.Item):
+# class SmjslibItem(Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    pass
+    # pass
+
+
+class SmjslibItem(Item):
+    # define the fields for your item here like:
+    # name = scrapy.Field()
+    title = Field()
+    author = Field()
+    publisher_city = Field()
+    publisher = Field()
+    publish_year = Field()
+    pages = Field()
+    length = Field()
+    isbn = Field()
+    price = Field()
+    titles = Field()
+    authors = Field()
+    tags = Field()
+    association = Field()
+    total = Field()
+    available = Field()
+    loan = Field()
+    frequence = Field()
+    # pass
