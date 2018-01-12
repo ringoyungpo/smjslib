@@ -4,8 +4,9 @@ import re
 from urllib.parse import urlencode
 from smjslib.items import SmjslibItem
 
-
+#爬取解析每一页的关键信息
 def parse_books_imformation(response):
+
     book_info = response.css('#ctl00_ContentPlaceHolder1_bookcardinfolbl').xpath('string(.)').extract()[0].split(
         '\u3000')
     book_info = list(filter(lambda item: item, book_info))
@@ -48,8 +49,11 @@ def parse_books_imformation(response):
     association = response.xpath('//*[@id="bardiv"]/div/table/tbody/tr[1]/td[2]/text()').extract()[0].split('/')[0]
     association = re.search(r'\w+[.\w+]+[-\w+]+', association).group()
 
+    #馆藏量用馆藏链接数量表示
     total = len(response.xpath('//*[@id="bardiv"]/div/table/tbody/tr[*]/td[1]/a'))
+    #借出量用借出链接数量表示
     loan = len(response.xpath('//*[@id="bardiv"]/div/table/tbody/tr[*]/td[6]/a'))
+    #近一年的借出数量
     frequence = response.xpath('//*[@id="ctl00_ContentPlaceHolder1_blclbl"]/text()').extract()[0]
     item = SmjslibItem()
     if isbn and price and association:
@@ -72,12 +76,12 @@ def parse_books_imformation(response):
         item['frequence'] = frequence
         yield item
 
-
+#将该页中的书本信息进行爬取解析
 def parse_books_url(response):
     for href in response.css('td span.title a::attr(href)'):
         yield response.follow(href, parse_books_imformation)
 
-
+#获取该热词的搜索结果总页数，进行该热词每一页的爬取
 def parse_books_pages(response):
     pages = len(response.css('#ctl00_ContentPlaceHolder1_gotoddlfl1 > option'))
     anywords = response.xpath('//*[@id="ctl00_ContentPlaceHolder1_conditionlbl"]/font/text()').extract()[0]
@@ -99,8 +103,11 @@ def parse_books_pages(response):
 class BooksSpider(scrapy.Spider):
     name = 'books'
     allowed_domains = ['smjslib.jmu.edu.cn']
+
+    #定义要爬取的网址入口
     start_urls = ['http://smjslib.jmu.edu.cn/top100.aspx?sparaname=anywords']
 
+    #将这100个搜索热词的搜索结果进行爬取
     def parse(self, response):
         for href in response.css('td a::attr(href)'):
             yield response.follow(href, parse_books_pages)

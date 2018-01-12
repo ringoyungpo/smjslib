@@ -13,7 +13,7 @@ from scrapy import Field,Item
     # name = scrapy.Field()
     # pass
 
-
+#定义的item
 class SmjslibItem(Item):
     # define the fields for your item here like:
     # name = scrapy.Field()

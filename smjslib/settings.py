@@ -64,6 +64,7 @@ ROBOTSTXT_OBEY = False
 
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
+#打开后可以使用管道功能
 ITEM_PIPELINES = {
    'smjslib.pipelines.SmjslibPipeline': 300,
 }

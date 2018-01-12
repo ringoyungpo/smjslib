@@ -7,9 +7,10 @@
 
 from pymysql import connect
 
-
+#该管道可以将数据传入数据库
 class SmjslibPipeline(object):
     def __init__(self):
+        #定义链接数据库信息
         self.connect = connect(
             host='localhost',
             db='smjslib',
@@ -24,7 +25,8 @@ class SmjslibPipeline(object):
     def process_item(self, item, spider):
         sql = r"SELECT * FROM books WHERE isbn='{}'".format(item['isbn'])
         self.cursor.execute(sql)
-        repetition = self.cursor.fetchone()
+        repetition = self.cursor.fetchone()、
+        #若存在该书籍信息则不存储，否则存储
         if repetition:
             pass
         else:
@@ -36,11 +38,13 @@ class SmjslibPipeline(object):
                     item['available'], item['loan'], item['frequence'])
                 self.cursor.execute(sql)
                 self.connect.commit()
+                #存储标签信息在单独的表内
                 for tag in item['tags']:
                     sql = r"INSERT INTO tags(isbn, tag)VALUES('{}', '{}')".format(
                         item['isbn'], tag)
                     self.cursor.execute(sql)
                     self.connect.commit()
+                #存储作者信息在单独的表内
                 for author in item['authors']:
                     sql = r"INSERT INTO authors(isbn, author)VALUES('{}', '{}')".format(
                         item['isbn'], author)
