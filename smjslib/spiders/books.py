@@ -12,33 +12,44 @@ def parse_books_imformation(response):
     book_info = list(filter(lambda item: item, book_info))
 
     title_author_publishment = re.split('／|．—', book_info[0])
+    #标题
     title = title_author_publishment[0]
+    #作者
     author = title_author_publishment[1]
     publishment = title_author_publishment[-1].split('；')[0]
+    #出版城市
     publisher_city, publisher, publish_year = re.split('：|，', publishment)
+    #出版年份
     publish_year = re.search(r'\d{4}', publish_year).group()
 
     pages_length = re.split('；', book_info[1])
     pages = re.findall('\d\d+', pages_length[0])
+    #总页数
     pages = max(pages)
+    #书籍长度
     length = re.search('\d\d+', pages_length[1]).group()
 
     isbnandprice = str(book_info[-5])
+    #isbn码
     isbn = isbnandprice.split('：')[0]
     isbn = re.search(r'ISBN[\w|-]+', isbn).group()
 
+    #价格
     price = isbnandprice.split('：')[1]
     price = re.search(r'\d+.?\d+', price).group()
 
+    #相关标题
     titles = str(book_info[-4]).split('．')[-1]
     titles = re.split(r'[①-⑳]', titles)
     titles.remove('')
 
+    #相关作者
     authors = str(book_info[-3]).split('．')[-1]
     authors = re.split(r'[①-⑳]', authors)
     authors = list(map(lambda author: author.strip(','), authors))
     authors = list(filter(lambda author: author, authors))
 
+    #相关标签
     tags = str(book_info[-2]).split('．')[-1]
     tags = re.split(r'[①-⑳]', tags)
     tags.remove('')
@@ -46,6 +57,7 @@ def parse_books_imformation(response):
     tags = sum(tags, [])
     tags = list(set(tags))
 
+    #索引码
     association = response.xpath('//*[@id="bardiv"]/div/table/tbody/tr[1]/td[2]/text()').extract()[0].split('/')[0]
     association = re.search(r'\w+[.\w+]+[-\w+]+', association).group()
 
